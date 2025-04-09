@@ -55,31 +55,6 @@ def track(input, T=np.zeros(3), maxt=1, thres=2,
         for kk in tqdm(range(0, c.shape[0]), ncols=60, desc="Preprocessing"):
             c[kk,:] = whiten_numeric(x, c[kk, :], wsize=winsize)
 
-    # plt.figure()
-    # nnn = np.linspace(start=0, stop=c.shape[0]-1, num=15).astype(int)
-    # for kk in nnn: 
-    #     plt.loglog(f, c[kk, :], label=f"j={kk}")
-    # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    # plt.xlabel('Frequency [Hz]')
-    # plt.ylabel("$c_{j,k}$")
-    # plt.savefig('../figures/ckj_7.pdf', bbox_inches='tight')
-    # plt.close('all')
-
-    # V[0, :] = c[0, :] # initiate first row
-    # baseline_Start = thres * np.median(V[0, offset:]) # Get number of potential tracks
-    # peaks_start, _ = find_peaks(V[0, offset:], distance=peak_dist, height=baseline_Start, prominence=baseline_Start)
-    # peaks_start+=offset
-
-    # plt.figure()
-    # plt.loglog(f, V[0, :], label=f"j={0}")
-    # plt.plot(f[peaks_start], V[0, peaks_start], "x")
-    # plt.xlabel('Frequency [Hz]')
-    # plt.ylabel("$V_{0,k}$")
-    # plt.show()
-    # plt.savefig('../figures/Vkj_peaks_start.pdf', bbox_inches='tight')
-    # plt.close('all')
-    # num_tracks = maxt if len(peaks_start) > maxt else len(peaks_start)
-
     if nperseg is None:
         nperseg = c.shape[0]
     nsegs = np.floor(c.shape[0]/nperseg)
@@ -102,97 +77,12 @@ def track(input, T=np.zeros(3), maxt=1, thres=2,
             idx = np.argmax(T[0:2] + V[seg*nperseg + j-1, k-1:k+1])
             V[seg*nperseg + j, k] = c[seg*nperseg + j, k] + T[idx] + V[seg*nperseg + j-1, k-1+idx]
             A[seg*nperseg + j, k] = idx - 1
-
-        # nnn = np.array_split(np.arange(c.shape[0]), c.shape[0]/100)
-        # for nn in list(nnn[:5]) + list(nnn[-5:]): 
-        #     plt.figure()
-        #     for kk in nn:
-        #         lbl = f"j={kk}" if kk==nn[0] or kk==nn[-1] else None
-        #         plt.loglog(f, V[kk, :], label=lbl)
-        #     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        #     plt.xlabel('Frequency [Hz]')
-        #     plt.ylabel("$V_{j,k}$")
-        #     plt.savefig(f'../figures/batch_super/sparce_t_v[{nn[0]}:{nn[-1]},j].pdf', bbox_inches='tight')
-        #     plt.close('all')
-
-        # for nn in list(nnn[:5]) + list(nnn[-5:]): 
-        #     plt.figure()
-        #     for kk in nn:
-        #         lbl = f"j={kk}" if kk==nn[0] or kk==nn[-1] else None
-        #         plt.loglog(f, c[kk, :], label=lbl)
-        #     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        #     plt.xlabel('Frequency [Hz]')
-        #     plt.ylabel("$c_{j,k}$")
-        #     plt.savefig(f'../figures/batch_super/sparce_t_c[{nn[0]}:{nn[-1]},j].pdf', bbox_inches='tight')
-        #     plt.close('all')
-        # breakpoint()
-        # plt.figure()
-        # cc = c.copy()
-        # x = np.arange(cc.shape[1]) if f is None else np.log(f)
-        # for kk in nnn: 
-        #     get_trend = np.polyfit(x, np.log(cc[kk,:]), 3)
-        #     predicted = np.exp( np.polyval(get_trend, x) )
-        #     plt.loglog(c[kk, :], label=f"j={kk}")
-        #     plt.loglog(predicted, 'k--')
-        # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        # plt.xlabel('Frequency [Hz]')
-        # plt.ylabel("$c_{j,k}$")
-        # plt.savefig('../figures/vkj_4.pdf', bbox_inches='tight')
-        # plt.close('all')
-
-        # plt.figure()
-        # for kk in nnn:      
-        #     norm=1/0.7023319615912207
-        #     smthd = ndimage.median_filter(c[kk, :], size=1000) * norm
-        #     qq=c[kk, :]/smthd
-        #     get_trend = np.polyfit(x, np.log10(qq), 3)
-        #     predicted = 10**np.polyval(get_trend, x)
-        #     plt.loglog(qq, label=f"j={kk}")
-        #     plt.loglog(predicted, color='gray', linestyle='--')
-        # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        # plt.xlabel('Frequency [Hz]')
-        # plt.ylabel("$c_{j,k}$")
-        # plt.savefig('../figures/vkj_5.pdf', bbox_inches='tight')
-        # plt.close('all')
-
-        # plt.figure()
-        # for kk in nnn:      
-        #     norm=1/0.7023319615912207
-        #     smthd = ndimage.median_filter(c[kk, :], size=1000) * norm
-        #     qq=c[kk, :]/smthd
-        #     get_trend = np.polyfit(x, np.log10(qq), 3)
-        #     predicted = 10**np.polyval(get_trend, x)
-        #     plt.loglog(qq/predicted, label=f"j={kk}")
-        # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        # plt.xlabel('Frequency [Hz]')
-        # plt.ylabel("$c_{j,k}$")
-        # plt.savefig('../figures/vkj_6.pdf', bbox_inches='tight')
-        # plt.close('all')
-        # np.savetxt('vjk.txt', x)
-        # breakpoint()
-        # nmaxindcs = np.argsort(V[-1,:])[-num_tracks:]
         
         # Idea: simplify data (create zeros below threshold for example,
         # and then search for peaks - make our lives easier)
         baseline_End = thres * np.median(c[seg*nperseg, offset:])
         peaks_end, _ = find_peaks(c[seg*nperseg, offset:], height=baseline_End, prominence=baseline_End)
         peaks_end+=offset
-
-        # plt.figure()
-        # plt.loglog(f, V[-1, :], label="j=end")
-        # plt.plot(f[peaks_end], V[-1, peaks_end], "x")
-        # plt.xlabel('Frequency [Hz]')
-        # plt.ylabel("$V_{\mathrm{end},k}$")
-        # plt.savefig('../figures/Vkj_peaks_end.pdf', bbox_inches='tight')
-        # plt.close('all')
-        # plt.figure()
-        # plt.loglog(f, c[-1, :], label="j=end")
-        # plt.plot(f[peaks_end], c[-1, peaks_end], "x")
-        # plt.xlabel('Frequency [Hz]')
-        # plt.ylabel("$V_{\mathrm{end},k}$")
-        # plt.show()
-        # plt.savefig('../figures/ckj_peaks_end.pdf', bbox_inches='tight')
-        # plt.close('all')
 
         # choose peaks
         peaks_found = np.sort(peaks_end)
@@ -202,22 +92,12 @@ def track(input, T=np.zeros(3), maxt=1, thres=2,
 
         if 'sol' not in locals():
             sol = np.zeros((num_tracks, c.shape[0]), dtype=int) # solution array
-            # sol.fill(np.nan)
-            # sol[:] = np.nan
-        # breakpoint()
+
         for t in range(num_tracks):
-            # breakpoint()
-            # fig, ax = plt.subplots(figsize=(10, 8))
-            # ax.pcolormesh(np.arange(c.shape[0]), np.log10(f), c.T, shading='nearest', cmap='YlOrBr', snap=True)
-            # breakpoint()
             sol[t, int(-(nsegs - (seg+1) )*nperseg)-1] = peaks_found[t] # np.argmax(V[-1, :]) # find maximum likelihood and backtrack solution
             for i in range(1, nperseg):
                 idx = sol[t, int(-i -(nsegs - (seg+1) )*nperseg)]
                 sol[t, int(-i -1 -(nsegs - (seg+1) )*nperseg)] = idx + A[int(-i -(nsegs - (seg+1) )*nperseg), idx]
-            # ax.plot(np.arange(c.shape[0]), np.log10(f[sol[t]]), 'pink')
-            # plt.show()
-            # breakpoint()
-            # plt.close('all')
     return sol
 
 
@@ -282,8 +162,6 @@ def viterbi_multiple_tracks(data, f=None, flims=None, Tobs=None, dt=None, T=np.z
                 print("Computing superlet transform for the signal-only part")
                 startt = time.time()
                 wspecs = superlets(whitened_sig_ts, 1/dt, f, const, [order])
-                # ax[1].imshow(wspecs, cmap=clrmap, interpolation="none", origin="lower", aspect="auto", 
-                #                     extent=[0, len(data)*dt, np.log10(f[1]), np.log10(f[-1])])
                 print(f"Elapsed {time.time() - startt}")
                 ax[1].pcolorfast(t, np.log10(f), wspecs[1:, 1:], cmap=clrmap)
                 ax[1].set_ylabel('log-Frequency [Hz]')
@@ -295,8 +173,6 @@ def viterbi_multiple_tracks(data, f=None, flims=None, Tobs=None, dt=None, T=np.z
             ax[1].set_xlabel('Time [sec]')
 
             if method.lower() in ['superlets', 'superlet', 'super']:
-                # cf = ax[2].imshow(wspec, cmap=clrmap, interpolation="none", origin="lower", aspect="auto", 
-                #                 extent=[0, len(data)*dt, np.log10(f[1]), np.log10(f[-1])]) 
                 cf = ax[2].pcolorfast(t, np.log10(f), wspec[1:, 1:], cmap=clrmap)               
             else:
                 cf = ax[2].pcolormesh(t, np.log10(f), wspec, shading='nearest', cmap=clrmap, snap=True)
