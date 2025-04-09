@@ -1,10 +1,12 @@
 # Viterbi
 
 The Viterbi algorithm for tracking frequency evolution of signals. The software 
-follows the implementation of [1903.12612](https://arxiv.org/abs/1903.12614). 
+follows the implementation of [[`1903.12612`](https://arxiv.org/abs/1903.12614)]. 
 
 The algorithm is used to track a Gravitational Wave (GW) signal on a time-frequency
 representation of the data. Applied to the analysis of the future [LISA mission](https://www.esa.int/Science_Exploration/Space_Science/LISA) data.
+
+Dependent on the [`BBHx`](https://github.com/mikekatz04/BBHx) and the [`GBGPU`](https://github.com/mikekatz04/GBGPU) packages developed by M. Katz.
 
 N. Galanis, N. Karnesis
 
