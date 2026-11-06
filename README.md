@@ -17,7 +17,6 @@ Dependent on the [`BBHx`](https://github.com/mikekatz04/BBHx) package developed 
 | `viterbi/viterbi.py` | trackers (first-order, chirp-aware f x Mc, and pre-merger (tc, Mc) Viterbi), multi-track extraction, evaluation, plotting, `analyse()` / `analyse_channels()` drivers |
 | `tests/test_crossing.py` | two MBHBs whose tracks cross (different chirp masses, different merger times) |
 | `tests/test_channels.py` | A vs E maps and A+E combination study |
-| `viterbi/viterbi_smbh.py` | original script (legacy, superseded by the above) |
 
 Quick start: `cd viterbi && python viterbi.py` (two-source demo, writes `viterbi_demo.png`).
 
