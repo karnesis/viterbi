@@ -20,11 +20,6 @@ Dependent on the [`BBHx`](https://github.com/mikekatz04/BBHx) package developed 
 
 Quick start: `cd viterbi && python viterbi.py` (two-source demo, writes `viterbi_demo.png`).
 
-## Environment
-
-Works in the `chimera_env` conda environment once its numpy is the pip-installed 2.4.4
-(numba, and hence BBHx/lisatools, refuse numpy 2.5).
-
 N. Galanis, N. Karnesis
 
 <span style="color:gray">Figure below: <i>Left</i>: Time series of a massive Black Hole Binary GW signal in noise. A simualtion of the future LISA data. <i>Center</i>: Time-frequency representation of only the signal time series. <i>Right</i>: The Viterbi tracks recovering the signals in the noise</span>.
